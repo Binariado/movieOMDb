@@ -1,69 +1,61 @@
 import React from 'react';
-import {
-  StyleSheet,
-  ScrollView,
-  TouchableOpacity,
-  View,
-  Text,
-  Image,
-  Dimensions,
-} from 'react-native';
+import {StyleSheet, ScrollView, View, Text, Dimensions} from 'react-native';
 import {api} from '../../api';
 import {useData} from '../../hooks';
-import {calculateAspectRatioFit} from '../../helpers/calResize';
+import {calculateAspectRatioFit, CalImg} from '../../helpers/calResize';
+import ItemMovie from '../components/ItemMovie';
+import {PropsItemMovie} from '../../utils/navegation/movieScreen';
 
 const {width} = Dimensions.get('window');
 
 const widthCube = width / 3;
-const calWidth = widthCube > 300 ? 300 : widthCube;
-const calHeight = (465 / 100) * ((calWidth * 100) / 300);
+const claImg = CalImg(widthCube, {h: 465, w: 300});
 
 const tamanio = calculateAspectRatioFit({
   srcWidth: 300,
   srcHeight: 465,
-  maxWidth: calWidth,
-  maxHeight: calHeight,
+  maxWidth: claImg.calWidth,
+  maxHeight: claImg.calHeight,
   orientation: 0,
 });
 
-const ListMovie = () => {
-  const [list, setList] = React.useState({
-    Search: [],
-    totalResults: 0,
-  });
+type PropsInit = {
+  Search: never[];
+  totalResults: number;
+};
 
+const initList: PropsInit = {
+  Search: [],
+  totalResults: 0,
+};
+
+const ListMovie = (props: PropsItemMovie) => {
+  const {navigation} = props;
   const respData = useData(async () => {
     const resp = await api.searchMoview({
-      i: 'tt3896198',
-      apikey: '5eec5adc',
       s: 'love',
     });
-    const {Response, Search, totalResults} = resp;
+    const {Response} = resp;
     if (Response === 'True') {
-      setList({
-        Search: Search,
-        totalResults: totalResults,
-      });
+      return resp;
     }
-  });
+    return initList;
+  }, initList);
 
   const {loadData} = respData;
+  const {Search} = respData.data;
 
   return (
     <View style={styles.container}>
-      <Text>Init Project</Text>
       {loadData ? (
-        <Text>Init Project</Text>
+        <Text>Load</Text>
       ) : (
         <ScrollView contentInsetAdjustmentBehavior="automatic">
           <View style={styles.contePoster}>
-            {list.Search.map((item: any, idx: number) => (
-              <TouchableOpacity
-                key={`poster-${idx}`}
-                style={styles.poster}
-                activeOpacity={0.5}>
-                <Image source={{uri: item.Poster}} style={styles.posterImg} />
-              </TouchableOpacity>
+            {Search.map((item: any, idx: number) => (
+              <View key={`poster-${idx}`} style={styles.poster}>
+                <ItemMovie navigation={navigation} item={item} />
+              </View>
             ))}
           </View>
         </ScrollView>
@@ -74,8 +66,8 @@ const ListMovie = () => {
 
 const styles = StyleSheet.create({
   container: {
-    marginTop: 50,
-    marginBottom: 50,
+    marginTop: 0,
+    marginBottom: 20,
   },
   contePoster: {
     flexDirection: 'row',

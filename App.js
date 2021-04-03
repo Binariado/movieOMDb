@@ -7,15 +7,10 @@
  */
 
 import React from 'react';
-import {SafeAreaView} from 'react-native';
 import AppRoot from './app/AppRoot';
 
 const App = () => {
-  return (
-    <SafeAreaView>
-      <AppRoot />
-    </SafeAreaView>
-  );
+  return <AppRoot />;
 };
 
 export default App;

@@ -28,3 +28,16 @@ export function calculateAspectRatioFit({
   }
   return {width: srcWidth, height: srcHeight};
 }
+type CalImgProps = {
+  h: number;
+  w: number;
+};
+
+export function CalImg(width: number, {h, w}: CalImgProps) {
+  const calWidth = width > w ? w : width;
+  const calHeight = (h / 100) * ((calWidth * 100) / w);
+  return {
+    calWidth,
+    calHeight,
+  };
+}

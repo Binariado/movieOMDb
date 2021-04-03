@@ -22,14 +22,13 @@ const responsed = async (resp: undefined | string | [], status: number) => {
   });
 };
 
-type Props = {
-  i: string;
-  apikey: string;
-  s: string;
-};
+// type Props = {
+//   i: string;
+//   s: string;
+// };
 
 export const api = {
-  async searchMoview(material: Props) {
+  async searchMoview(material: any) {
     try {
       const myHeaders = new Headers();
 

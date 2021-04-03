@@ -1,9 +1,9 @@
 import {useState, useEffect} from 'react';
 
-const useData = (func: Function) => {
+const useData = (func: Function, init: any) => {
   const [data, setData] = useState({
-    data: null,
-    loadData: false,
+    data: init,
+    loadData: true,
   });
 
   const dataFunc = async () => {

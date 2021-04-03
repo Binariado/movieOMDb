@@ -1,13 +1,8 @@
 import React from 'react';
-import {View} from 'react-native';
-import ListMovie from './screens/ListMovie';
+import StackNavigator from '../app/navegation/StackNavigator';
 
 const AppRoot = () => {
-  return (
-    <View>
-      <ListMovie />
-    </View>
-  );
+  return <StackNavigator />;
 };
 
 export default AppRoot;
