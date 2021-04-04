@@ -1,6 +1,6 @@
 import {useState, useEffect} from 'react';
 
-const useData = (func: Function, init: any) => {
+const useData = (func: Function, init: any = null) => {
   const [data, setData] = useState({
     data: init,
     loadData: true,

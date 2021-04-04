@@ -16,4 +16,8 @@ export type PropsItemMovie = {
     Poster: string;
     imdbID: string;
   };
+  tamanio: {
+    width: number;
+    height: number;
+  };
 };

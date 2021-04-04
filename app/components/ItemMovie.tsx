@@ -1,16 +1,24 @@
 import React from 'react';
-import {StyleSheet, Image, TouchableOpacity} from 'react-native';
+import {StyleSheet, Image, View, TouchableOpacity} from 'react-native';
 import {PropsItemMovie} from '../../utils/navegation/movieScreen';
 
-const ItemMovie = ({item, navigation}: PropsItemMovie) => {
+const ItemMovie = ({tamanio, item, navigation}: PropsItemMovie) => {
   const handleViewInfo = () => {
     navigation.navigate('Moview', {imdbID: item.imdbID});
   };
 
+  const styleItem = {
+    width: tamanio.width,
+    height: tamanio.height,
+    padding: 3,
+  };
+
   return (
-    <TouchableOpacity activeOpacity={0.5} onPress={handleViewInfo}>
-      <Image source={{uri: item.Poster}} style={styles.posterImg} />
-    </TouchableOpacity>
+    <View style={styleItem}>
+      <TouchableOpacity activeOpacity={0.5} onPress={handleViewInfo}>
+        <Image source={{uri: item.Poster}} style={styles.posterImg} />
+      </TouchableOpacity>
+    </View>
   );
 };
 

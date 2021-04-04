@@ -1,4 +1,5 @@
 import React from 'react';
+import {useDispatch} from 'react-redux';
 import {RouteProp} from '@react-navigation/native';
 import {
   Image,
@@ -9,10 +10,11 @@ import {
   ScrollView,
 } from 'react-native';
 import {useRoute} from '@react-navigation/native';
+import AntDesign from 'react-native-vector-icons/AntDesign';
 import {api} from '../../../api';
 import {useData} from '../../../hooks';
 import {calculateAspectRatioFit, CalImg} from '../../../helpers/calResize';
-import AntDesign from 'react-native-vector-icons/AntDesign';
+import {setError} from '../../../store/errorReducer/errors.actios';
 
 const {width, height} = Dimensions.get('window');
 
@@ -33,62 +35,33 @@ type Props = {
   };
 };
 
-/**
-{
-  "Title": "To All the Boys: P.S. I Still Love You",
-  "Year": "2020",
-  "Rated": "TV-14",
-  "Released": "12 Feb 2020",
-  "Runtime": "101 min",
-  "Genre": "Comedy, Drama, Romance",
-  "Director": "Michael Fimognari",
-  "Writer": "Sofia Alvarez (screenplay by), J. Mills Goodloe (screenplay by), Jenny Han (based on the novel by), Maxwell Peters (collaborating writer)",
-  "Actors": "Lana Condor, Noah Centineo, Jordan Fisher, Anna Cathcart",
-  "Plot": "Lara Jean and Peter have just taken their relationship from pretend to officially official when another recipient of one of her old love letters enters the picture.",
-  "Language": "English",
-  "Country": "USA",
-  "Awards": "4 nominations.",
-  "Poster": "https://m.media-amazon.com/images/M/MV5BZjMwNDQ4NzMtOThmZi00NmMyLThkMWItMTA3MTg2YjdiZDRmXkEyXkFqcGdeQXVyMTMxODk2OTU@._V1_SX300.jpg",
-  "Ratings": [
-      {
-          "Source": "Internet Movie Database",
-          "Value": "6.0/10"
-      },
-      {
-          "Source": "Metacritic",
-          "Value": "54/100"
-      }
-  ],
-  "Metascore": "54",
-  "imdbRating": "6.0",
-  "imdbVotes": "29,444",
-  "imdbID": "tt9354842",
-  "Type": "movie",
-  "DVD": "N/A",
-  "BoxOffice": "N/A",
-  "Production": "N/A",
-  "Website": "N/A",
-  "Response": "True"
-}
-
- */
-
 const ViewMovie = () => {
+  const dispatch = useDispatch();
   const route = useRoute<RouteProp<Props, 'Moview'>>();
 
   const respData = useData(async () => {
-    const resp = await api.searchMoview({
-      i: route.params.imdbID,
-    });
-    const {Response} = resp;
-    if (Response === 'True') {
-      return resp;
+    try {
+      const resp = await api.searchMoview({
+        i: route.params.imdbID,
+      });
+      const {Response} = resp;
+      if (Response === 'True') {
+        return resp;
+      }
+      return {};
+    } catch (error) {
+      dispatch(
+        setError({
+          title: '!Oh oh',
+          desp: 'an unexpected error occurred. Reload the app and try again',
+          type: 'err',
+        }),
+      );
     }
-    return {};
   }, {});
 
   const {data, loadData} = respData;
-  console.log(data.Poster);
+
   return (
     <View style={styles.container}>
       <ScrollView contentInsetAdjustmentBehavior="automatic">
@@ -97,7 +70,6 @@ const ViewMovie = () => {
         ) : (
           <View style={styles.contePoster}>
             <View style={styles.poster}>
-              {/* <View style={styles.capa} /> */}
               <Image source={{uri: data.Poster}} style={styles.posterImg} />
             </View>
             <View style={styles.contentDesp}>

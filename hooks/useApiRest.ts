@@ -1,5 +1,5 @@
-import {Rest} from '../helpers/apiRest';
+import {restGroup} from '../helpers/apiRest';
 
-const useApiRest = Rest;
+const useApiRest = restGroup;
 
 export default useApiRest;

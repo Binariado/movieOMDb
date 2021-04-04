@@ -1,4 +1,5 @@
 import useData from './useData';
 import useApiRest from './useApiRest';
+import useDebounce from './useDebounce';
 
-export {useData, useApiRest};
+export {useData, useApiRest, useDebounce};

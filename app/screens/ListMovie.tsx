@@ -1,14 +1,34 @@
 import React from 'react';
-import {StyleSheet, ScrollView, View, Text, Dimensions} from 'react-native';
-import {api} from '../../api';
-import {useData} from '../../hooks';
+import {
+  StyleSheet,
+  SafeAreaView,
+  Text,
+  Dimensions,
+  FlatList,
+  View,
+  ActivityIndicator,
+  TextInput,
+  TouchableOpacity,
+} from 'react-native';
+import AntDesign from 'react-native-vector-icons/AntDesign';
+import {useSelector, useDispatch} from 'react-redux';
+import {useData, useDebounce} from '../../hooks';
 import {calculateAspectRatioFit, CalImg} from '../../helpers/calResize';
 import ItemMovie from '../components/ItemMovie';
+import Filter from '../components/Filter';
 import {PropsItemMovie} from '../../utils/navegation/movieScreen';
+import {
+  getListMoview,
+  nextPageMoview,
+  filter_view,
+} from '../../store/movieReducer/movie.actions';
+import {setError} from '../../store/errorReducer/errors.actios';
+import {PropsMovie} from '../../utils/storeProp';
+import {initSearch} from '../../utils/initSearch';
 
-const {width} = Dimensions.get('window');
+const deviceWidth = Dimensions.get('window').width;
 
-const widthCube = width / 3;
+const widthCube = deviceWidth / 3;
 const claImg = CalImg(widthCube, {h: 465, w: 300});
 
 const tamanio = calculateAspectRatioFit({
@@ -19,69 +39,155 @@ const tamanio = calculateAspectRatioFit({
   orientation: 0,
 });
 
-type PropsInit = {
-  Search: never[];
-  totalResults: number;
-};
-
-const initList: PropsInit = {
-  Search: [],
-  totalResults: 0,
-};
-
 const ListMovie = (props: PropsItemMovie) => {
+  const dispatch = useDispatch();
+  const {filterView, listMovie, loadMovie} = useSelector(
+    (state: PropsMovie) => state.movie,
+  );
   const {navigation} = props;
   const respData = useData(async () => {
-    const resp = await api.searchMoview({
-      s: 'love',
-    });
-    const {Response} = resp;
-    if (Response === 'True') {
-      return resp;
-    }
-    return initList;
-  }, initList);
+    await dispatch(getListMoview(initSearch));
+  });
 
   const {loadData} = respData;
-  const {Search} = respData.data;
+  const {Search} = listMovie;
+
+  const renderItem = (itemMovie: any) => {
+    return (
+      <ItemMovie
+        tamanio={tamanio}
+        navigation={navigation}
+        item={itemMovie.item}
+      />
+    );
+  };
+
+  const handleReached = () => {
+    dispatch(nextPageMoview());
+  };
+
+  const [executedFunction, cancelDebounce] = useDebounce((data: any) => {
+    dispatch(getListMoview({...initSearch, ...data}));
+  }, 1000);
+
+  const handleSearch = (text: string) => {
+    try {
+      cancelDebounce();
+      if (text) {
+        executedFunction({s: text});
+      } else {
+        executedFunction(initSearch);
+      }
+    } catch (error) {
+      cancelDebounce();
+      dispatch(
+        setError({
+          title: '!Oh oh',
+          desp: 'an unexpected error occurred. Reload the app and try again',
+          type: 'err',
+        }),
+      );
+    }
+  };
+
+  const toggleModal = () => {
+    dispatch(filter_view(!filterView));
+  };
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.conteList}>
+      <View style={styles.filter}>
+        <View style={styles.conteInpu}>
+          <TextInput
+            style={styles.input}
+            onChangeText={handleSearch}
+            placeholder="Buscar"
+          />
+          <TouchableOpacity activeOpacity={0.5} onPress={toggleModal}>
+            <AntDesign
+              style={styles.iconFiltre}
+              name="filter"
+              size={25}
+              color="#f0f0f2"
+            />
+          </TouchableOpacity>
+        </View>
+      </View>
       {loadData ? (
         <Text>Load</Text>
       ) : (
-        <ScrollView contentInsetAdjustmentBehavior="automatic">
-          <View style={styles.contePoster}>
-            {Search.map((item: any, idx: number) => (
-              <View key={`poster-${idx}`} style={styles.poster}>
-                <ItemMovie navigation={navigation} item={item} />
-              </View>
-            ))}
-          </View>
-        </ScrollView>
+        <FlatList
+          data={Search}
+          onEndReached={handleReached}
+          onEndReachedThreshold={0}
+          horizontal={false}
+          numColumns={3}
+          renderItem={renderItem}
+          keyExtractor={item => `${item.imdbID}`}
+          ListFooterComponent={
+            <>
+              {loadMovie && (
+                <View style={styles.load}>
+                  <ActivityIndicator size="large" color="#2d2d8c" />
+                </View>
+              )}
+            </>
+          }
+        />
       )}
-    </View>
+      <Filter />
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    marginTop: 0,
-    marginBottom: 20,
+  conteList: {
+    marginBottom: 70,
   },
-  contePoster: {
+  conteInpu: {
     flexDirection: 'row',
     flexWrap: 'wrap',
+    alignItems: 'center',
   },
-  poster: {
-    width: tamanio.width,
-    height: tamanio.height,
-    padding: 3,
-  },
-  posterImg: {
-    width: 'auto',
-    height: '100%',
+  input: {
+    height: 40,
+    margin: 12,
+    borderWidth: 0,
+    elevation: 2,
     borderRadius: 5,
+    fontWeight: 'bold',
+    color: '#10101A',
+    backgroundColor: '#f0f0f2',
+    flexGrow: 1,
+  },
+  iconFiltre: {
+    textAlign: 'center',
+    paddingLeft: 8,
+    paddingRight: 15,
+  },
+  filter: {
+    width: '100%',
+    backgroundColor: '#10101A',
+    elevation: 2,
+    borderBottomLeftRadius: 10,
+    borderBottomRightRadius: 10,
+    flexDirection: 'column',
+  },
+  load: {
+    width: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 10,
+    zIndex: 4,
+  },
+  modal: {
+    justifyContent: 'flex-end',
+    margin: 0,
+  },
+  conteModal: {
+    backgroundColor: '#f0f0f2',
+    width: deviceWidth,
+    paddingBottom: 15,
   },
 });
 
