@@ -61,7 +61,7 @@ const handlerr = (dispatch: ThunkDispatch<{}, {}, AnyAction>, desp: string) => {
 const handlifo = (dispatch: ThunkDispatch<{}, {}, AnyAction>, desp: string) => {
   dispatch(
     setError({
-      title: '!hello',
+      title: 'The search does not match',
       desp: desp,
       type: 'info',
     }),

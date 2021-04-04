@@ -83,6 +83,8 @@ const TitleAcordion = ({select, title, bgColog, expanded}: PropTitle) => {
     backgroundColor: bgColog,
   };
 
+  //const select = _.find(filter, (item: string, key) => key === typeFilter);
+
   return (
     <View style={styles.conteTitleAcor}>
       <Text style={styles.tSection}>{title}</Text>
@@ -102,6 +104,7 @@ const SectionFilter = (props: PropsSec) => {
   const {data, title, filter, typeFilter} = props;
   const countChip = data.length;
   const select = _.find(filter, (item: string, key) => key === typeFilter);
+
   return (
     <List.Section>
       {countChip > 20 ? (
