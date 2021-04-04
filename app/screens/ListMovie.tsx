@@ -123,7 +123,7 @@ const ListMovie = (props: PropsItemMovie) => {
           horizontal={false}
           numColumns={3}
           renderItem={renderItem}
-          keyExtractor={item => `${item.imdbID}`}
+          keyExtractor={item => `${item.imdbID}-${new Date().getTime}`}
           ListFooterComponent={
             <>
               {loadMovie && (

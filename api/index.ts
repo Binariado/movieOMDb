@@ -27,13 +27,13 @@ type Props = Array<{}> | Array<[]> | Object | string | number | any;
 export const api = {
   async searchMoview(material: Props) {
     try {
-      const myHeaders = new Headers();
-
       const $params = build({...material, apikey: API_KEY});
 
       var request = {
         method: 'GET',
-        headers: myHeaders,
+        headers: {
+          'Content-type': 'application/json',
+        },
       };
 
       return await fetch(`${URL_API}/?${$params}`, request)
