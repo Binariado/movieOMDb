@@ -64,7 +64,7 @@ const Alert = () => {
           <Text style={styles.desp}>{desp}</Text>
         </View>
         <View style={styles.footer}>
-          <Button onPress={handle} title="Comfirmed" color="#2020da" />
+          <Button onPress={handle} title="Aceptar" color="#2020da" />
         </View>
       </View>
     </Modal>

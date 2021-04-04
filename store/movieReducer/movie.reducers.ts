@@ -4,6 +4,7 @@ import {
   FILTER,
   LOAD_MOVIE,
   FILTER_VIEW,
+  NOT_FOUND,
 } from './movie.types';
 // import {PropsAction} from '../../utils/storeProp';
 
@@ -17,6 +18,7 @@ type Props = {
   };
   loadMovie: boolean;
   filterView: boolean;
+  notFound: any;
 };
 
 const INITIAL_STATE: Props = {
@@ -29,6 +31,7 @@ const INITIAL_STATE: Props = {
   },
   filterView: false,
   loadMovie: false,
+  notFound: null,
 };
 
 const reducer = (state = INITIAL_STATE, action: any) => {
@@ -57,6 +60,11 @@ const reducer = (state = INITIAL_STATE, action: any) => {
       return {
         ...state,
         loadMovie: action.payload,
+      };
+    case NOT_FOUND:
+      return {
+        ...state,
+        notFound: action.payload,
       };
     default:
       return state;

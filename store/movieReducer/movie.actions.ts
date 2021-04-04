@@ -7,6 +7,7 @@ import {
   FILTER,
   LOAD_MOVIE,
   FILTER_VIEW,
+  NOT_FOUND,
 } from './movie.types';
 import {apiRest} from '../../helpers/apiRest';
 import {setError} from '../../store/errorReducer/errors.actios';
@@ -46,12 +47,19 @@ export const load_movie = (payload: any) => {
   };
 };
 
+export const not_found = (payload: any) => {
+  return {
+    payload,
+    type: NOT_FOUND,
+  };
+};
+
 const handlerr = (dispatch: ThunkDispatch<{}, {}, AnyAction>, desp: string) => {
   dispatch(
     setError({
       title: '!Oh oh',
       desp: !desp
-        ? 'an unexpected error occurred. Reload the app and try again'
+        ? 'ocurrió un error inesperado. Vuelve a cargar la aplicación y vuelve a intentarlo.'
         : desp,
       type: 'err',
     }),
@@ -59,13 +67,7 @@ const handlerr = (dispatch: ThunkDispatch<{}, {}, AnyAction>, desp: string) => {
 };
 
 const handlifo = (dispatch: ThunkDispatch<{}, {}, AnyAction>, desp: string) => {
-  dispatch(
-    setError({
-      title: 'The search does not match',
-      desp: desp,
-      type: 'info',
-    }),
-  );
+  dispatch(not_found(desp));
 };
 
 const getListMovieSearch = async (
@@ -90,10 +92,7 @@ const getListMovieSearch = async (
     return resp;
   } catch (error) {
     console.error(error);
-    handlerr(
-      dispatch,
-      'an unexpected error occurred. If the error persists, reload the  application',
-    );
+    handlerr(dispatch, 'Error al obtener listado. Intente nuevamente');
   } finally {
     dispatch(load_movie(false));
   }
@@ -111,6 +110,13 @@ export const getListMoview = (filter: any) => {
           list_movie({
             Search: Search,
             totalResults: totalResults,
+          }),
+        );
+      } else {
+        dispatch(
+          list_movie({
+            Search: [],
+            totalResults: 0,
           }),
         );
       }

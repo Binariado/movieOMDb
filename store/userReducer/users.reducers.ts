@@ -12,7 +12,7 @@ const INITIAL_STATE: Props = {
   isAuthenticate: false,
   detailUser: {
     name: 'anonimo',
-    id: '',
+    id: 'HU-001',
     avatar,
   },
 };

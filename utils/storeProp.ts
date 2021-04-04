@@ -11,6 +11,7 @@ export type PropsMovie = {
     loadMovie: boolean;
     filter: Object;
     filterView: boolean;
+    notFound: any;
   };
 };
 

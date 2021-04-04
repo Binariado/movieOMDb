@@ -16,6 +16,7 @@ import {useData, useDebounce} from '../../hooks';
 import {calculateAspectRatioFit, CalImg} from '../../helpers/calResize';
 import ItemMovie from '../components/ItemMovie';
 import Filter from '../components/Filter';
+import NotFound from '../components/NotFound';
 import {PropsItemMovie} from '../../utils/navegation/movieScreen';
 import {
   getListMoview,
@@ -41,7 +42,7 @@ const tamanio = calculateAspectRatioFit({
 
 const ListMovie = (props: PropsItemMovie) => {
   const dispatch = useDispatch();
-  const {filterView, listMovie, loadMovie} = useSelector(
+  const {filterView, listMovie, loadMovie, notFound} = useSelector(
     (state: PropsMovie) => state.movie,
   );
   const {navigation} = props;
@@ -94,6 +95,10 @@ const ListMovie = (props: PropsItemMovie) => {
     dispatch(filter_view(!filterView));
   };
 
+  if (notFound) {
+    console.log(notFound);
+  }
+
   return (
     <SafeAreaView style={styles.conteList}>
       <View style={styles.filter}>
@@ -135,6 +140,7 @@ const ListMovie = (props: PropsItemMovie) => {
           }
         />
       )}
+      <NotFound notFound={notFound} />
       <Filter />
     </SafeAreaView>
   );
