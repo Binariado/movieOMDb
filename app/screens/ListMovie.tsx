@@ -140,7 +140,7 @@ const ListMovie = (props: PropsItemMovie) => {
           }
         />
       )}
-      <NotFound notFound={notFound} />
+      {!Search?.length && <NotFound notFound={notFound} />}
       <Filter />
     </SafeAreaView>
   );
