@@ -1,12 +1,18 @@
 import React from 'react';
 import {StyleSheet, View} from 'react-native';
+import {useNetInfo} from '@react-native-community/netinfo';
 import Alert from './components/Alert';
+import NetInfo from './components/NetInfo';
 import StackNavigator from '../app/navegation/StackNavigator';
 
 const AppRoot = () => {
+  const netInfo = useNetInfo();
+  const {isConnected} = netInfo;
+
   return (
     <View style={styles.container}>
-      <Alert />
+      {!isConnected && <NetInfo />}
+      {isConnected && <Alert />}
       <StackNavigator />
     </View>
   );
